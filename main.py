@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import openpyxl
 from pyxlsb import open_workbook as open_xlsb
 from io import BytesIO
 st.title("ISERVEU RECON PROCESS")
@@ -72,7 +71,25 @@ print("MATCH COUNT:", df_merge['final_status'].value_counts())
 print("final status:::",df_merge['final_status'])
 print("merge columns:",df_merge.columns)
 df_merge.to_csv('final data.csv')
-st.write(df_merge)
+# st.write(df_merge)
+st.dataframe(df_merge)
 st.write(df_merge['final_status'].value_counts())
-
-
+df_merge.to_csv(index=False).encode('utf-8')
+# st.download_button("Download CSV",df_merge.to_excel,file_name='Recon_file.csv',mime='text/csv')
+# st.sidebar.download_button(label='Download CSV',data=result,mime='text/csv',file_name='Download.csv')
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+    format1 = workbook.add_format({'num_format': '0.00'}) 
+    worksheet.set_column('A:A', None, format1)  
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+df_xlsx = to_excel(df_merge)
+# df_xlsx=b'df_merge'
+st.download_button(label='📥 Download Current Result',
+                                data=df_xlsx ,
+                                file_name= 'df_test.xlsx')
