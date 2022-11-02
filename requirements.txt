@@ -3,4 +3,4 @@ openpyxl
 pandas
 numpy
 pyxlsb
-
+xlsxwriter
